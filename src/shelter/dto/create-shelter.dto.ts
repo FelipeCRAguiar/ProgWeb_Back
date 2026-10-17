@@ -33,6 +33,6 @@ export class CreateShelterDto {
 
     @IsNotEmpty()
     @IsNumber()
-    @Min(0, {message: 'O limite de atendimentos não pode ser negativo.'})
+    @Min(0, {message: 'O limite de visitantes não pode ser negativo.'})
     atendeeLimit: number;
 }
