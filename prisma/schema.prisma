@@ -57,6 +57,7 @@ model Species {
   name String
   description String?
   race Race[]
+  active  Boolean @default(true)
 }
 
 enum Size {
