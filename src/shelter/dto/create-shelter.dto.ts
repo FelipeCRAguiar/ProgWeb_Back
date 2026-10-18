@@ -31,6 +31,10 @@ export class CreateShelterDto {
     @IsNotEmpty()
     workingHours: string;
 
+    @IsString()
+    @IsNotEmpty()
+    visitingHours: string;
+
     @IsNotEmpty()
     @IsNumber()
     @Min(0, {message: 'O limite de visitantes não pode ser negativo.'})

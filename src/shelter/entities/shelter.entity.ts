@@ -8,5 +8,6 @@ export class Shelter {
     maxCapacity: number;
     workingHours: string;
     atendeeLimit: number;
+    visitingHours: string;
 
 }

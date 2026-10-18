@@ -48,6 +48,7 @@ model Shelter {
   maxCapacity Int
   workingHours String
   atendeeLimit Int
+  visitingHours String @default("")
   visit Visit[]
   donation Donation[]
 }

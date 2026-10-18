@@ -67,9 +67,10 @@ export class SpeciesService {
 
   async remove(id: number) {
     try {
-      return await this.prisma.species.delete({
+      const species = await this.prisma.species.delete({
         where: { id: id }
       });
+        return { message: `A especie ${species.name} foi deletada com sucesso` };
     } catch (error: any) {
         if (error.code === 'P2025') {
           throw new NotFoundException(`Especie ${id} não encontrada`);
@@ -78,4 +79,3 @@ export class SpeciesService {
       }
     }
   }
-
