@@ -51,6 +51,7 @@ model Shelter {
   visitingHours String @default("")
   visit Visit[]
   donation Donation[]
+  animals Animal[]
 }
 
 model Species {
@@ -100,6 +101,8 @@ model Animal {
   medicalRecord MedicalRecord[]
   adoption Adoption?
   animalImage AnimalImage[]
+    shelterId Int?
+  shelter Shelter? @relation(fields: [shelterId], references: [id])
 }
 
 enum RecordType {
@@ -176,5 +179,5 @@ model AnimalImage {
   id Int @id @default(autoincrement())
   animalId Int
   imageUrl String
-  animal Animal @relation(fields: [animalId], references: [id])
+  animal Animal @relation(fields: [animalId], references: [id], onDelete: Cascade)
 }
