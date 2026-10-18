@@ -1,20 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, Query } from '@nestjs/common';
 import { AdoptionService } from './adoption.service.js';
 import { CreateAdoptionDto } from './dto/create-adoption.dto.js';
 import { UpdateAdoptionDto } from './dto/update-adoption.dto.js';
+import { AdoptionStatus } from '../generated/prisma/enums.js'
 
 @Controller('adoption')
 export class AdoptionController {
   constructor(private readonly adoptionService: AdoptionService) {}
 
   @Post()
-  create(@Body() createAdoptionDto: CreateAdoptionDto) {
+  create(@Body(ValidationPipe) createAdoptionDto: CreateAdoptionDto) {
     return this.adoptionService.create(createAdoptionDto);
   }
 
   @Get()
-  findAll() {
-    return this.adoptionService.findAll();
+  findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('status') status?: AdoptionStatus
+  ) {
+    return this.adoptionService.findAll(
+      page? Number(page) : 1,
+      limit? Number(limit) : 1,
+      status
+    );
   }
 
   @Get(':id')
@@ -23,7 +32,7 @@ export class AdoptionController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdoptionDto: UpdateAdoptionDto) {
+  update(@Param('id') id: string, @Body(ValidationPipe) updateAdoptionDto: UpdateAdoptionDto) {
     return this.adoptionService.update(+id, updateAdoptionDto);
   }
 

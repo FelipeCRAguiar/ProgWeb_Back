@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service.js'
 
 @Injectable()
 export class RaceService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createRaceDto: CreateRaceDto) {
     const species = await this.prisma.species.findFirst({
@@ -32,7 +32,7 @@ export class RaceService {
   async findAll(page: number, limit: number, name?: string) {
     const pageNumber = page > 0 ? page : 1
     const limitNumber = limit > 0 ? limit : 1
-    const skip = (page - 1) * limit
+    const skip = (pageNumber - 1) * limitNumber
 
     const where: any = {};
 

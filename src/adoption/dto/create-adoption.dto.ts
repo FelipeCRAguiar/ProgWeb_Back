@@ -1,5 +1,6 @@
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsDate } from 'class-validator'
+import { IsString, IsNotEmpty, IsOptional, IsNumber, IsDate, IsEnum } from 'class-validator'
 import { Type } from 'class-transformer'
+import { AdoptionStatus } from '../../generated/prisma/enums.js'
 
 export class CreateAdoptionDto {
     @IsNumber()
@@ -10,9 +11,9 @@ export class CreateAdoptionDto {
     @IsNotEmpty()
     animalId: number
 
-    @IsString()
+    @IsEnum(AdoptionStatus)
     @IsOptional()
-    status?: string
+    status?: AdoptionStatus
 
     @IsString()
     @IsOptional()
