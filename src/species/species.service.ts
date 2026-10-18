@@ -44,7 +44,7 @@ export class SpeciesService {
 
   async findOne(id: number) {
     const species =  await this.prisma.species.findFirst({
-      where: { id }
+      where: { id: id }
     });
     if(!species){
       throw new HttpException('A especie não está cadastrado', HttpStatus.NOT_FOUND);
