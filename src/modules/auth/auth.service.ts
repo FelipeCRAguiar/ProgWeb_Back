@@ -1,26 +1,70 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto.js';
-import { UpdateAuthDto } from './dto/update-auth.dto.js';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { AuthRepository } from './auth.repository.js';
+import { RegisterDto } from './dto/register.dto.js';
+import { LoginDto } from './dto/login.dto.js';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private authRepository: AuthRepository,
+    private jwtService: JwtService,
+  ) { }
+
+  async register(data: RegisterDto) {
+    const userExists = await this.authRepository.findByEmail(data.email);
+    if (userExists) throw new BadRequestException('Email já cadastrado');
+
+    const hashedPassword = await bcrypt.hash(data.senha, 10);
+
+    const user = await this.authRepository.create({
+      username: data.nome,
+      email: data.email,
+      password: hashedPassword,
+      cpf: data.cpf,
+      phone: data.telefone,
+      birthday: new Date(data.dataNascimento),
+      profile: 'ADOTANTE',
+      status: 'ATIVO',
+    });
+
+    return this.generateTokens(user);
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async login(data: LoginDto) {
+    const user = await this.authRepository.findByEmail(data.email);
+    if (!user) throw new UnauthorizedException('Email ou senha inválidos');
+
+    const isPasswordValid = await bcrypt.compare(data.senha, user.password);
+    if (!isPasswordValid) throw new UnauthorizedException('Email ou senha inválidos');
+
+    if (user.status !== 'ATIVO') throw new UnauthorizedException('Usuário inativo');
+
+    return this.generateTokens(user);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
+  async resetPassword(token: string, novaSenha: string) {
+    try {
+      const payload: any = this.jwtService.verify(token);
+      const hashedPassword = await bcrypt.hash(novaSenha, 10);
+
+      await this.authRepository.updatePassword(payload.sub, hashedPassword);
+      return { message: 'Senha alterada com sucesso' };
+    } catch (error) {
+      throw new BadRequestException('Token inválido ou expirado');
+    }
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
+  async logout() {
+    return { message: 'Logout realizado com sucesso' };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  private generateTokens(user: any) {
+    const payload = { sub: user.id, email: user.email, perfil: user.profile };
+    return {
+      accessToken: this.jwtService.sign(payload, { expiresIn: '1h' }),
+      refreshToken: this.jwtService.sign(payload, { expiresIn: '7d' }),
+    };
   }
 }
