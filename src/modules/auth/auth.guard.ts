@@ -18,10 +18,6 @@ export class AuthGuard implements CanActivate {
         const token = authHeader.split(' ')[1];
         if (!token) throw new UnauthorizedException('Token mal formatado');
 
-        const isRevoked = await this.authRepository.isTokenRevoked(token);
-        if (isRevoked) {
-            throw new UnauthorizedException('Token revogado. Faça login novamente.');
-        }
         try {
             const payload = await this.jwtService.verifyAsync(token, {
                 secret: process.env.JWT_SECRET || 'segredo_do_jwt',

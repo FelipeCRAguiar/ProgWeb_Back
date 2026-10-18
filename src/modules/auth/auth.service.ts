@@ -55,8 +55,6 @@ export class AuthService {
       throw new BadRequestException('Token inválido ou expirado');
     }
   }
-
-
   private generateTokens(user: any) {
     const payload = { sub: user.id, email: user.email, profile: user.profile };
     return {
