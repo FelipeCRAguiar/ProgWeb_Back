@@ -2,7 +2,7 @@ import { PrismaClient } from '../../generated/prisma/client.js';
 import * as bcrypt from 'bcrypt';
 
 export async function seedAuth(prisma: PrismaClient) {
-    console.log('[Auth] Populando usuários...');
+    console.log('[Auth] Populando usuários');
 
     const hashedPassword = await bcrypt.hash('123456', 10);
 

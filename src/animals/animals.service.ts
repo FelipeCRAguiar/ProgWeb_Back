@@ -73,15 +73,11 @@ export class AnimalsService {
     await this.findOne(id);
     return this.animalsRepository.update(id, { status });
   }
-
-  // Remove o cadastro do animal
   async remove(id: number) {
     await this.findOne(id);
     await this.animalsRepository.delete(id);
     return { message: 'Animal removido com sucesso' };
   }
-
-  // Faz upload de foto 
   async uploadImage(id: number, file: Express.Multer.File) {
     await this.findOne(id);
 
