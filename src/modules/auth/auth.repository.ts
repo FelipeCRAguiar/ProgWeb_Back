@@ -33,10 +33,4 @@ export class AuthRepository {
 
         }
     }
-    async isTokenRevoked(token: string): Promise<boolean> {
-        const revoked = await this.prisma.revokedToken.findUnique({
-            where: { token },
-        });
-        return !!revoked;
-    }
 }

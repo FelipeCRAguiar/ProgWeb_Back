@@ -56,25 +56,9 @@ export class AuthService {
     }
   }
 
-  async logout(accessToken: string, refreshToken: string) {
-    try {
-      const accessPayload: any = this.jwtService.decode(accessToken);
-      const refreshPayload: any = this.jwtService.decode(refreshToken);
-
-      const accessExpiresAt = new Date(accessPayload.exp * 1000);
-      const refreshExpiresAt = new Date(refreshPayload.exp * 1000);
-
-      await this.authRepository.saveRevokedToken(accessToken, accessExpiresAt);
-      await this.authRepository.saveRevokedToken(refreshToken, refreshExpiresAt);
-
-      return { message: 'Logout realizado com sucesso' };
-    } catch (error) {
-      return { message: 'Logout realizado com sucesso' };
-    }
-  }
 
   private generateTokens(user: any) {
-    const payload = { sub: user.id, email: user.email, perfil: user.profile };
+    const payload = { sub: user.id, email: user.email, profile: user.profile };
     return {
       accessToken: this.jwtService.sign(payload, { expiresIn: '1h' }),
       refreshToken: this.jwtService.sign(payload, { expiresIn: '7d' }),

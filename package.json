@@ -69,6 +69,6 @@
     "prisma@7.10.1": true
   },
   "prisma": {
-    "seed": "tsx src/prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts"
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, UploadedFile, UseInterceptors, SetMetadata, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Req, Param, Query, UseGuards, UploadedFile, UseInterceptors, SetMetadata, ParseIntPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AnimalsService } from './animals.service.js';
@@ -9,6 +9,7 @@ import { AuthGuard } from '../modules/auth/auth.guard.js';
 import { RolesGuard } from '../modules/auth/roles.guard.js';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { ValidationPipe } from '@nestjs/common';
 
 @ApiTags('Animais')
 @Controller('api/animals')
@@ -44,6 +45,7 @@ export class AnimalsController {
   @Get(':id')
   @ApiOperation({ summary: 'Obter detalhes de um animal por ID' })
   findOne(@Param('id') id: string) {
+
     return this.animalsService.findOne(Number(id));
   }
 
@@ -52,7 +54,7 @@ export class AnimalsController {
   @SetMetadata('roles', ['ADMIN', 'VOLUNTARIO'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Cadastrar novo animal' })
-  create(@Body() data: CreateAnimalDto) {
+  create(@Body(ValidationPipe) data: CreateAnimalDto) {
     return this.animalsService.create(data);
   }
 
@@ -86,21 +88,6 @@ export class AnimalsController {
   @Post(':id/images')
   @UseGuards(AuthGuard, RolesGuard)
   @SetMetadata('roles', ['ADMIN', 'VOLUNTARIO'])
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads', // Pasta onde a imagem será salva
-        filename: (req, file, cb) => {
-          // Gera um nome aleatório para não sobrescrever imagens com o mesmo nome
-          const randomName = Array(32)
-            .fill(null)
-            .map(() => Math.round(Math.random() * 16).toString(16))
-            .join('');
-          cb(null, `${randomName}${extname(file.originalname)}`);
-        },
-      }),
-    }),
-  )
   @ApiConsumes('multipart/form-data')
   @ApiBearerAuth()
   @ApiBody({
