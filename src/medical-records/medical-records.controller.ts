@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Body, Param, Query, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, ValidationPipe } from '@nestjs/common';
 import { MedicalRecordsService } from './medical-records.service.js';
 import { CreateMedicalRecordDto } from './dto/create-medical-record.dto.js';
 import { UpdateMedicalRecordDto } from './dto/update-medical-record.dto.js';
@@ -37,5 +37,10 @@ export class MedicalRecordsController {
   @Put(':id')
   update(@Param('id') id: string, @Body(ValidationPipe) updateMedicalRecordDto: UpdateMedicalRecordDto) {
     return this.medicalRecordsService.update(+id, updateMedicalRecordDto)
-  } 
+  }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.medicalRecordsService.remove(+id)
+  }
+
 }

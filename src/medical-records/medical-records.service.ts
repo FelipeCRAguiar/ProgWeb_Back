@@ -81,4 +81,17 @@ export class MedicalRecordsService {
       }
     })
   }
+      async remove(id: number) {
+    const record = await this.prisma.medicalRecord.findUnique({
+      where: { id }
+    })
+
+    if(!record) {
+      throw new NotFoundException('Registro médico não cadastrado')
+    }
+
+    await this.prisma.medicalRecord.delete({
+      where: { id }
+    })
+  }
 }
