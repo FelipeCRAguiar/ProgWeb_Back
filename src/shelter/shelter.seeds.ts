@@ -63,7 +63,7 @@ export async function seedShelters() {
 
   
   await prisma.shelter.deleteMany({});
-
+  
   await prisma.shelter.createMany({
     data: shelters,
   });
