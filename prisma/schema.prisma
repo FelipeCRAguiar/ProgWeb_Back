@@ -48,6 +48,7 @@ model Shelter {
   maxCapacity Int
   workingHours String
   atendeeLimit Int
+  visitingHours String @default("")
   visit Visit[]
   donation Donation[]
 }
@@ -57,6 +58,7 @@ model Species {
   name String
   description String?
   race Race[]
+  active  Boolean @default(true)
 }
 
 enum Size {
