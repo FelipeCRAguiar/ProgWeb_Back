@@ -1,7 +1,7 @@
 import { PrismaClient } from '../generated/prisma/client.js';
 
 export async function seedAnimals(prisma: PrismaClient) {
-    console.log('🌱 [Animals] Populando espécies, raças, abrigos e animais...');
+    console.log('[Animals] Populando espécies, raças, abrigos e animais.');
 
 
     let cao = await prisma.species.findFirst({ where: { name: 'Cão' } });
@@ -51,7 +51,6 @@ export async function seedAnimals(prisma: PrismaClient) {
         },
     });
 
-    // 4. Animal (findFirst + create para evitar conflito se já existir)
     let rex = await prisma.animal.findFirst({
         where: { name: 'Rex', raceId: viraLata.id },
     });
@@ -69,5 +68,5 @@ export async function seedAnimals(prisma: PrismaClient) {
         });
     }
 
-    console.log('✅ [Animals] Dados de animais e abrigos criados com sucesso!');
+    console.log('[Animals] Dados de animais e abrigos criados com sucesso!');
 }
