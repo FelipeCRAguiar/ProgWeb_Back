@@ -94,4 +94,23 @@ export class MedicalRecordsService {
       where: { id }
     })
   }
+    async findByAnimal(animalId: number, page: number, limit: number) {
+    const animal = await this.prisma.animal.findUnique({
+      where: { id: animalId }
+    })
+
+    if(!animal) {
+      throw new NotFoundException('Animal não cadastrado')
+    }
+
+    const pageNumber = page > 0 ? page : 1
+    const limitNumber = limit > 0 ? limit : 10
+    const skip = (pageNumber - 1) * limitNumber
+
+    return this.prisma.medicalRecord.findMany({
+      skip,
+      take: limitNumber,
+      where: { animalId }
+    })
+  }
 }

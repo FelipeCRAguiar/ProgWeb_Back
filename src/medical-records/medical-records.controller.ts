@@ -42,5 +42,16 @@ export class MedicalRecordsController {
   remove(@Param('id') id: string) {
     return this.medicalRecordsService.remove(+id)
   }
-
+    @Get(':animalId/animals')
+  findByAnimal(
+    @Param('animalId') animalId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string
+  ) {
+    return this.medicalRecordsService.findByAnimal(
+      +animalId,
+      page ? Number(page) : 1,
+      limit ? Number(limit) : 10
+    )
+  }
 }
