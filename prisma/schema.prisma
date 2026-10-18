@@ -11,6 +11,12 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+model RevokedToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
 
 enum UserStatus {
   ATIVO
@@ -50,6 +56,7 @@ model Shelter {
   atendeeLimit Int
   visit Visit[]
   donation Donation[]
+  animals Animal[]
 }
 
 model Species {
@@ -98,6 +105,8 @@ model Animal {
   medicalRecord MedicalRecord[]
   adoption Adoption?
   animalImage AnimalImage[]
+    shelterId Int?
+  shelter Shelter? @relation(fields: [shelterId], references: [id])
 }
 
 enum RecordType {
