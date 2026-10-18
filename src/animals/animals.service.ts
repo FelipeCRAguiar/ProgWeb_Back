@@ -32,7 +32,6 @@ export class AnimalsService {
     };
   }
 
-  // Busca um animal pelo ID
   async findOne(id: number) {
     const animal = await this.animalsRepository.findById(id);
     if (!animal) {
@@ -45,8 +44,6 @@ export class AnimalsService {
     return this.animalsRepository.findByShelterId(shelterId);
   }
 
-
-  // Cria um novo animal 
   async create(data: CreateAnimalDto) {
     return this.animalsRepository.create({
       name: data.nome,
@@ -58,8 +55,6 @@ export class AnimalsService {
       status: 'DISPONIVEL',
     });
   }
-
-  // Edita informações do animal 
   async update(id: number, data: UpdateAnimalDto) {
     await this.findOne(id);
 
