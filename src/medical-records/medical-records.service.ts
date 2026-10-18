@@ -1,26 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMedicalRecordDto } from './dto/create-medical-record.dto.js';
-import { UpdateMedicalRecordDto } from './dto/update-medical-record.dto.js';
+import { PrismaService } from '../prisma/prisma.service.js';
 
 @Injectable()
 export class MedicalRecordsService {
-  create(createMedicalRecordDto: CreateMedicalRecordDto) {
-    return 'This action adds a new medicalRecord';
-  }
+  constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return `This action returns all medicalRecords`;
-  }
+  async create(createMedicalRecordDto: CreateMedicalRecordDto) {
+    const animal = await this.prisma.animal.findUnique({
+      where: { id: createMedicalRecordDto.animalId }
+    })
 
-  findOne(id: number) {
-    return `This action returns a #${id} medicalRecord`;
-  }
+    if(!animal) {
+      throw new NotFoundException('Animal não cadastrado')
+    }
 
-  update(id: number, updateMedicalRecordDto: UpdateMedicalRecordDto) {
-    return `This action updates a #${id} medicalRecord`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} medicalRecord`;
+    return this.prisma.medicalRecord.create({
+      data: {
+        ...createMedicalRecordDto,
+        date: new Date(createMedicalRecordDto.date)
+      }
+    })
   }
 }
