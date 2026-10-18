@@ -53,6 +53,7 @@ export class ShelterService {
         id: true,
         name: true,
         address: true,
+        phone: true,
         visitingHours: true,
       },
     });
@@ -69,6 +70,7 @@ export class ShelterService {
         id: true,
         name: true,
         address: true,
+        phone: true,
         workingHours: true,
       },
     });

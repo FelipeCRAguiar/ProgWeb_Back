@@ -22,6 +22,10 @@ export class ShelterController {
     return this.shelterService.findAll({ page, limit, name, address });
   }
 
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.shelterService.findOne(id);
+  }
 
   @Get(':id/visiting-hours')
     async getVisitingHours(@Param('id', ParseIntPipe) id: number){
