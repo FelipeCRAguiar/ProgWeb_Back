@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ValidationPipe } from '@nestjs/common';
 import { RaceService } from './race.service.js';
 import { CreateRaceDto } from './dto/create-race.dto.js';
 import { UpdateRaceDto } from './dto/update-race.dto.js';
@@ -8,13 +8,21 @@ export class RaceController {
   constructor(private readonly raceService: RaceService) {}
 
   @Post()
-  create(@Body() createRaceDto: CreateRaceDto) {
+  create(@Body(ValidationPipe) createRaceDto: CreateRaceDto) {
     return this.raceService.create(createRaceDto);
   }
 
   @Get()
-  findAll() {
-    return this.raceService.findAll();
+  findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('name') name?: string
+  ) {
+    return this.raceService.findAll(
+      page? Number(page) : 1,
+      limit? Number(limit) : 10,
+      name
+    );
   }
 
   @Get(':id')
@@ -23,7 +31,7 @@ export class RaceController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRaceDto: UpdateRaceDto) {
+  update(@Param('id') id: string, @Body(ValidationPipe) updateRaceDto: UpdateRaceDto) {
     return this.raceService.update(+id, updateRaceDto);
   }
 

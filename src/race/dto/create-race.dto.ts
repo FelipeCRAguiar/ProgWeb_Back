@@ -1,15 +1,15 @@
-import { IsString, IsNotEmpty } from 'class-validator'
+import { IsString, IsNotEmpty, IsNumber, IsEnum } from 'class-validator'
+import { Size } from '../../generated/prisma/enums.js'
 
 export class CreateRaceDto {
     @IsString()
     @IsNotEmpty()
     name: string
 
-    @IsString()
-    @IsNotEmpty()
-    size: string
+    @IsEnum(Size)
+    size: Size
 
-    @IsString()
+    @IsNumber()
     @IsNotEmpty()
-    speciesId: string
+    speciesId: number
 }
