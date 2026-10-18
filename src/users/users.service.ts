@@ -1,26 +1,58 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto.js';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto.js';
+import { PrismaService } from '../prisma/prisma.service.js';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(private prisma: PrismaService) {}
+
+  async findAll(page: number, limit: number, profile?: string, status?: string) {
+    const skip = (page - 1) * limit
+
+    const where: any = {};
+
+    if (profile) {
+      where.profile = profile;
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
+    return await this.prisma.user.findMany({
+      skip,
+      take: limit,
+      where,
+      omit: { password: true }
+    })
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findOne(id: number) {
+    const user = await this.prisma.user.findFirst({
+      where: { id },
+      omit: { password: true }
+    });
+
+    if(!user) {
+      throw new NotFoundException('Usuário não cadastrado')
+    }
+
+    return user
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+  async updateRole(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.prisma.user.findFirst({
+      where: { id }
+    });
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+    if(!user) {
+      throw new NotFoundException('Usuário não cadastrado')
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return await this.prisma.user.update({
+      where: { id },
+      data: { profile: updateUserDto.profile },
+      omit: { password: true }
+    })
   }
 }
