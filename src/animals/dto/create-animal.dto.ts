@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsEnum, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAnimalDto {
@@ -22,4 +22,10 @@ export class CreateAnimalDto {
     @ApiProperty({ example: 1, description: 'ID da Raça' })
     @IsNumber()
     racaId: number;
+
+
+    @ApiProperty({ example: 1, description: 'ID do Abrigo', required: false })
+    @IsNumber()
+    @IsOptional()
+    shelterId?: number;
 }

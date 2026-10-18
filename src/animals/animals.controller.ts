@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, UploadedFile, UseInterceptors, SetMetadata } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, UploadedFile, UseInterceptors, SetMetadata, ParseIntPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { AnimalsService } from './animals.service.js';
@@ -30,10 +30,9 @@ export class AnimalsController {
   }
 
   @Get('abrigo/:abrigoId')
-  @ApiOperation({ summary: 'Obter animais de um abrigo' })
-  findByShelter(@Param('abrigoId') abrigoId: string) {
-    // Como o schema não liga animal direto ao abrigo, retorna todos os disponíveis
-    return this.animalsService.findAll(1, 100, undefined, 'DISPONIVEL');
+  @ApiOperation({ summary: 'Obter detalhes de todos os animais em um abrigo' })
+  findByShelter(@Param('abrigoId', ParseIntPipe) abrigoId: number) {
+    return this.animalsService.findByShelter(abrigoId);
   }
 
   @Get(':id')
@@ -71,7 +70,7 @@ export class AnimalsController {
 
   @Delete(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @SetMetadata('roles', ['ADMIN']) // Só Admin pode deletar
+  @SetMetadata('roles', ['ADMIN'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Remover cadastro do animal' })
   remove(@Param('id') id: string) {

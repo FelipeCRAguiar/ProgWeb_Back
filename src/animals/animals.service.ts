@@ -7,10 +7,11 @@ import { UpdateAnimalDto } from './dto/update-animal.dto.js';
 export class AnimalsService {
   constructor(private animalsRepository: AnimalsRepository) { }
 
+
   async findAll(page: number, limit: number, especieId?: number, status?: string) {
     const filters: any = {};
 
-    // Filtro por espécie (precisa filtrar pela raça que pertence à espécie)
+
     if (especieId) {
       filters.race = { speciesId: Number(especieId) };
     }
@@ -26,17 +27,26 @@ export class AnimalsService {
         total: result.total,
         page,
         limit,
-        totalPages: Math.ceil(result.total / limit)
-      }
+        totalPages: Math.ceil(result.total / limit),
+      },
     };
   }
 
+  // Busca um animal pelo ID
   async findOne(id: number) {
     const animal = await this.animalsRepository.findById(id);
-    if (!animal) throw new NotFoundException('Animal não encontrado');
+    if (!animal) {
+      throw new NotFoundException(`Animal com ID ${id} não encontrado`);
+    }
     return animal;
   }
 
+  async findByShelter(shelterId: number) {
+    return this.animalsRepository.findByShelterId(shelterId);
+  }
+
+
+  // Cria um novo animal 
   async create(data: CreateAnimalDto) {
     return this.animalsRepository.create({
       name: data.nome,
@@ -44,12 +54,14 @@ export class AnimalsService {
       birthday: new Date(data.dataNascimento),
       description: data.descricao,
       raceId: data.racaId,
+      shelterId: data.shelterId || null,
       status: 'DISPONIVEL',
     });
   }
 
+  // Edita informações do animal 
   async update(id: number, data: UpdateAnimalDto) {
-    await this.findOne(id); // Garante que existe
+    await this.findOne(id);
 
     const updateData: any = {};
     if (data.nome) updateData.name = data.nome;
@@ -61,21 +73,23 @@ export class AnimalsService {
     return this.animalsRepository.update(id, updateData);
   }
 
+
   async updateStatus(id: number, status: string) {
     await this.findOne(id);
     return this.animalsRepository.update(id, { status });
   }
 
+  // Remove o cadastro do animal
   async remove(id: number) {
     await this.findOne(id);
     await this.animalsRepository.delete(id);
     return { message: 'Animal removido com sucesso' };
   }
 
+  // Faz upload de foto 
   async uploadImage(id: number, file: Express.Multer.File) {
     await this.findOne(id);
 
-    // Simula a URL da imagem. Em produção, subiria para AWS S3 ou similar
     const imageUrl = `http://localhost:3000/uploads/${file.filename}`;
 
     return this.animalsRepository.addImage(id, imageUrl);

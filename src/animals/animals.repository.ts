@@ -13,7 +13,14 @@ export class AnimalsRepository {
                 where: filters,
                 skip,
                 take: limit,
-                include: { race: { include: { species: true } } },
+                include: {
+                    race: {
+                        include: {
+                            species: true,
+                        },
+                    },
+                    animalImage: true,
+                },
             }),
             this.prisma.animal.count({ where: filters }),
         ]);
@@ -24,23 +31,71 @@ export class AnimalsRepository {
     async findById(id: number) {
         return this.prisma.animal.findUnique({
             where: { id },
-            include: { race: { include: { species: true } }, animalImage: true },
+            include: {
+                race: {
+                    include: {
+                        species: true,
+                    },
+                },
+                animalImage: true,
+                medicalRecord: true,
+                adoption: true,
+            },
         });
     }
 
     async create(data: any) {
-        return this.prisma.animal.create({ data });
+        return this.prisma.animal.create({
+            data,
+            include: {
+                race: {
+                    include: {
+                        species: true,
+                    },
+                },
+            },
+        });
     }
 
     async update(id: number, data: any) {
-        return this.prisma.animal.update({ where: { id }, data });
+        return this.prisma.animal.update({
+            where: { id },
+            data,
+            include: {
+                race: {
+                    include: {
+                        species: true,
+                    },
+                },
+            },
+        });
     }
+
 
     async delete(id: number) {
         return this.prisma.animal.delete({ where: { id } });
     }
 
     async addImage(animalId: number, imageUrl: string) {
-        return this.prisma.animalImage.create({ data: { animalId, imageUrl } });
+        return this.prisma.animalImage.create({
+            data: {
+                animalId,
+                imageUrl,
+            },
+        });
+    }
+
+    async findByShelterId(shelterId: number) {
+        return this.prisma.animal.findMany({
+            where: { shelterId },
+            include: {
+                race: {
+                    include: {
+                        species: true,
+                    },
+                },
+                animalImage: true,
+            },
+        });
     }
 }
