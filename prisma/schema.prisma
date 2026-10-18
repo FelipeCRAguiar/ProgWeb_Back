@@ -11,7 +11,7 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-model RevokedToken {
+ model RevokedToken {
   id        Int      @id @default(autoincrement())
   token     String   @unique
   expiresAt DateTime
@@ -183,5 +183,5 @@ model AnimalImage {
   id Int @id @default(autoincrement())
   animalId Int
   imageUrl String
-  animal Animal @relation(fields: [animalId], references: [id])
+  animal Animal @relation(fields: [animalId], references: [id], onDelete: Cascade)
 }

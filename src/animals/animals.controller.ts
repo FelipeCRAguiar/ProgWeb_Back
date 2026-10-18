@@ -1,12 +1,14 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, UploadedFile, UseInterceptors, SetMetadata, ParseIntPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AnimalsService } from './animals.service.js';
 import { CreateAnimalDto } from './dto/create-animal.dto.js';
 import { UpdateAnimalDto } from './dto/update-animal.dto.js';
 import { UpdateStatusDto } from './dto/update-status.dto.js';
 import { AuthGuard } from '../modules/auth/auth.guard.js';
 import { RolesGuard } from '../modules/auth/roles.guard.js';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @ApiTags('Animais')
 @Controller('api/animals')
@@ -15,6 +17,10 @@ export class AnimalsController {
 
   @Get()
   @ApiOperation({ summary: 'Listar animais cadastrados' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 10 })
+  @ApiQuery({ name: 'especieId', required: false, example: 1 })
+  @ApiQuery({ name: 'status', required: false, example: 'DISPONIVEL' })
   findAll(
     @Query('page') page: string,
     @Query('limit') limit: string,
@@ -25,7 +31,7 @@ export class AnimalsController {
       Number(page) || 1,
       Number(limit) || 10,
       Number(especieId),
-      status
+      status,
     );
   }
 
@@ -80,7 +86,21 @@ export class AnimalsController {
   @Post(':id/images')
   @UseGuards(AuthGuard, RolesGuard)
   @SetMetadata('roles', ['ADMIN', 'VOLUNTARIO'])
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads', // Pasta onde a imagem será salva
+        filename: (req, file, cb) => {
+          // Gera um nome aleatório para não sobrescrever imagens com o mesmo nome
+          const randomName = Array(32)
+            .fill(null)
+            .map(() => Math.round(Math.random() * 16).toString(16))
+            .join('');
+          cb(null, `${randomName}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
   @ApiConsumes('multipart/form-data')
   @ApiBearerAuth()
   @ApiBody({
@@ -92,7 +112,7 @@ export class AnimalsController {
     },
   })
   @ApiOperation({ summary: 'Fazer upload de foto do animal' })
-  uploadImage(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
-    return this.animalsService.uploadImage(Number(id), file);
+  uploadImage(@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File) {
+    return this.animalsService.uploadImage(id, file);
   }
 }

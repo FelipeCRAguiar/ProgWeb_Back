@@ -1,18 +1,18 @@
 import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { AuthService } from './auth.service.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { ResetPasswordDto } from './dto/reset-password.dto.js';
 import { AuthGuard } from './auth.guard.js';
 
-@ApiTags('Autenticação & Conta')
+@ApiTags('Autenticação e Conta')
 @Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @Post('register')
-  @ApiOperation({ summary: 'Cadastrar novo usuário (Adotante)' })
+  @ApiOperation({ summary: 'Cadastrar novo usuário (adotante)' })
   register(@Body() data: RegisterDto) {
     return this.authService.register(data);
   }
@@ -33,7 +33,9 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Encerrar sessão ativa' })
-  logout(@Req() req: any) {
-    return this.authService.logout();
+
+  @ApiBody({ schema: { type: 'object', properties: { accessToken: { type: 'string' }, refreshToken: { type: 'string' } } } })
+  logout(@Req() req: any, @Body() body: any) {
+    return this.authService.logout(body.accessToken, body.refreshToken);
   }
 }

@@ -20,4 +20,23 @@ export class AuthRepository {
     async updatePassword(id: number, password: string) {
         return this.prisma.user.update({ where: { id }, data: { password } });
     }
+
+    async saveRevokedToken(token: string, expiresAt: Date): Promise<void> {
+        try {
+            await this.prisma.revokedToken.create({
+                data: {
+                    token,
+                    expiresAt,
+                },
+            });
+        } catch (error) {
+
+        }
+    }
+    async isTokenRevoked(token: string): Promise<boolean> {
+        const revoked = await this.prisma.revokedToken.findUnique({
+            where: { token },
+        });
+        return !!revoked;
+    }
 }
