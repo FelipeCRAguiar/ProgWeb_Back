@@ -31,11 +31,13 @@ export async function seedSpecies() {
     },
   ];
 
-  await prisma.species.deleteMany({});
+ await prisma.race.deleteMany();
 
-  await prisma.species.createMany({
-    data: species,
-  });
+await prisma.species.deleteMany({});
+
+await prisma.species.createMany({
+  data: species,
+});
 
   console.log('5 espécies foram inseridas com sucesso!');
 }

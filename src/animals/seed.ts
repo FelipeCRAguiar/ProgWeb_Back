@@ -7,14 +7,14 @@ export async function seedAnimals(prisma: PrismaClient) {
     let cao = await prisma.species.findFirst({ where: { name: 'Cão' } });
     if (!cao) {
         cao = await prisma.species.create({
-            data: { name: 'Cão', description: 'Família Canidae' },
+            data: { name: 'Cão', description: 'Família Canidae',active: true,  },
         });
     }
 
     let gato = await prisma.species.findFirst({ where: { name: 'Gato' } });
     if (!gato) {
         gato = await prisma.species.create({
-            data: { name: 'Gato', description: 'Família Felidae' },
+            data: { name: 'Gato', description: 'Família Felidae', active: true },
         });
     }
 
