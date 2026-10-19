@@ -1,14 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ValidationPipe, SetMetadata, UseGuards } from '@nestjs/common';
 import { SpeciesService } from './species.service.js';
 import { CreateSpeciesDto } from './dto/create-species.dto.js';
 import { UpdateSpeciesDto } from './dto/update-species.dto.js';
+import { AuthGuard } from '../modules/auth/auth.guard.js';
+import { RolesGuard } from '../modules/auth/roles.guard.js';
 
 @Controller('species')
 export class SpeciesController {
   constructor(private readonly speciesService: SpeciesService) {}
   
   @Post()
-  create(@Body() createSpeciesDto: CreateSpeciesDto) {
+  @UseGuards(AuthGuard, RolesGuard)
+  @SetMetadata('roles', ['ADMIN'])
+  create(@Body(ValidationPipe) createSpeciesDto: CreateSpeciesDto) {
     return this.speciesService.create(createSpeciesDto);
   }
  
@@ -34,11 +38,15 @@ export class SpeciesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSpeciesDto: UpdateSpeciesDto) {
+  @UseGuards(AuthGuard, RolesGuard)
+  @SetMetadata('roles', ['ADMIN'])
+  update(@Param('id') id: string, @Body(ValidationPipe) updateSpeciesDto: UpdateSpeciesDto) {
     return this.speciesService.update(+id, updateSpeciesDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @SetMetadata('roles', ['ADMIN'])
   remove(@Param('id') id: string) {
     return this.speciesService.remove(+id);
   }
