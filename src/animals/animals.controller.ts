@@ -93,5 +93,5 @@ export class AnimalsController {
     @Body() createAnimalImageDto: CreateAnimalImageDto,
   ) {
     return this.animalsService.addImage(id, createAnimalImageDto);
-  }
+  }  
 }

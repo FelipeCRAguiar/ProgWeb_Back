@@ -1,14 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Put, ParseIntPipe, ValidationPipe, SetMetadata, UseGuards } from '@nestjs/common';
 import { ShelterService } from './shelter.service.js';
 import { CreateShelterDto } from './dto/create-shelter.dto.js';
 import { UpdateShelterDto } from './dto/update-shelter.dto.js';
+import { AuthGuard } from '../modules/auth/auth.guard.js';
+import { RolesGuard } from '../modules/auth/roles.guard.js';
+
 
 @Controller('shelter')
 export class ShelterController {
   constructor(private readonly shelterService: ShelterService) {}
 
   @Post()
-  create(@Body() createShelterDto: CreateShelterDto) {
+  @UseGuards(AuthGuard, RolesGuard)
+  @SetMetadata('roles', ['ADMIN'])
+  create(@Body(ValidationPipe) createShelterDto: CreateShelterDto) {
     return this.shelterService.create(createShelterDto);
   }
 
@@ -37,19 +42,30 @@ export class ShelterController {
       return this.shelterService.getWorkingHours(id);
     } 
 
+  @Get(':id/capacity')
+  async getCapacity(@Param('id', ParseIntPipe) id: number) {
+    return this.shelterService.getCapacity(id);
+  }
+
   @Put(':id/working-hours')
+  @UseGuards(AuthGuard, RolesGuard)
+  @SetMetadata('roles', ['ADMIN'])
     async updateWorkingHours(
       @Param('id', ParseIntPipe) id: number,
-      @Body()body: {workingHours: string}){
+      @Body(ValidationPipe)body: {workingHours: string}){
       return this.shelterService.updateWorkingHours(id, body);
     }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateShelterDto: UpdateShelterDto) {
+  @UseGuards(AuthGuard, RolesGuard)
+  @SetMetadata('roles', ['ADMIN'])
+  update(@Param('id', ParseIntPipe) id: number, @Body(ValidationPipe) updateShelterDto: UpdateShelterDto) {
     return this.shelterService.update(id, updateShelterDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @SetMetadata('roles', ['ADMIN'])
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.shelterService.remove(id);
   }

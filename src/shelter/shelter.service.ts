@@ -80,6 +80,36 @@ export class ShelterService {
     return shelter;
   }   
 
+  async getCapacity(id: number) {
+    const shelter = await this.prisma.shelter.findFirst({
+      where: { id: id },
+      select: {
+        id: true,
+        name: true,
+        maxCapacity: true,
+      },
+    });
+    if(!shelter) {
+      throw new HttpException('O abrigo não está cadastrado', HttpStatus.NOT_FOUND);
+    }
+    const currentCapacity = await this.prisma.animal.count({
+      where: {
+        shelterId: id,
+        status:{
+          in:['DISPONIVEL', 'EM_PROCESSO'],
+        }
+  }   
+    });
+    return {
+      id: shelter.id,
+      name: shelter.name,
+      maxCapacity: shelter.maxCapacity, 
+      currentCapacity: currentCapacity,
+      availableCapacity: shelter.maxCapacity - currentCapacity,
+      isFull: currentCapacity >= shelter.maxCapacity,
+    };
+  }
+
   async findOne(id: number) {
     const shelter =  await this.prisma.shelter.findFirst({
       where: { id: id }

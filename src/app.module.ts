@@ -6,10 +6,13 @@ import { ShelterModule } from './shelter/shelter.module.js';
 import { SpeciesModule } from './species/species.module.js';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
-
+import { UsersModule } from './users/users.module.js';
+import { MedicalRecordsModule } from './medical-records/medical-records.module.js';
+import { VisitsModule } from './visits/visits.module.js';
+import { DonationsModule } from './donations/donations.module.js';
 
 @Module({
-  imports: [PrismaModule, ShelterModule, SpeciesModule, AnimalsModule, AuthModule],
+  imports: [PrismaModule, ShelterModule, SpeciesModule, AnimalsModule, AuthModule, VisitsModule, DonationsModule, UsersModule, MedicalRecordsModule],
   controllers: [AppController],
   providers: [AppService],
 })
