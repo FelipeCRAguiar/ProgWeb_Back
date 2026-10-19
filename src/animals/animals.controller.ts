@@ -7,7 +7,6 @@ import { UpdateAnimalDto } from './dto/update-animal.dto.js';
 import { UpdateStatusDto } from './dto/update-status.dto.js';
 import { AuthGuard } from '../modules/auth/auth.guard.js';
 import { RolesGuard } from '../modules/auth/roles.guard.js';
-import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 
@@ -85,7 +84,7 @@ export class AnimalsController {
     return this.animalsService.remove(Number(id));
   }
 
-  @Post(':id/images')
+  /*@Post(':id/images')
   @UseGuards(AuthGuard, RolesGuard)
   @SetMetadata('roles', ['ADMIN', 'VOLUNTARIO'])
   @ApiConsumes('multipart/form-data')
@@ -102,4 +101,5 @@ export class AnimalsController {
   uploadImage(@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File) {
     return this.animalsService.uploadImage(id, file);
   }
+    */
 }

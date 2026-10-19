@@ -78,7 +78,7 @@ export class AnimalsService {
     await this.animalsRepository.delete(id);
     return { message: 'Animal removido com sucesso' };
   }
-  async uploadImage(id: number, file: Express.Multer.File) {
+  async uploadImage(id: number, file: any) {
     await this.findOne(id);
 
     const imageUrl = `http://localhost:3000/uploads/${file.filename}`;
