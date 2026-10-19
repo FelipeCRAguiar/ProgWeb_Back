@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { VisitsService } from './visits.service.js';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateVisitDto } from './dto/create-visit.dto.js';
 import { UpdateVisitDto } from './dto/update-visit.dto.js';
+import { VisitsService } from './visits.service.js';
 
 @Controller('visits')
 export class VisitsController {
@@ -12,9 +12,36 @@ export class VisitsController {
     return this.visitsService.create(createVisitDto);
   }
 
-  @Get()
-  findAll() {
-    return this.visitsService.findAll();
+  @Get('my-visits')
+  findMyVisits(
+    @Query('userId') userId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('date') date?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.visitsService.findMyVisits(Number(userId), {
+      page,
+      limit,
+      date,
+      status,
+    });
+  }
+
+  @Get('shelter/:shelterId')
+  findShelterVisits(
+    @Param('shelterId') shelterId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('date') date?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.visitsService.findShelterVisits(Number(shelterId), {
+      page,
+      limit,
+      date,
+      status,
+    });
   }
 
   @Get(':id')
@@ -27,8 +54,18 @@ export class VisitsController {
     return this.visitsService.update(+id, updateVisitDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.visitsService.remove(+id);
+  @Patch(':id/cancel')
+  cancel(@Param('id') id: string) {
+    return this.visitsService.cancel(+id);
+  }
+
+  @Patch(':id/complete')
+  complete(@Param('id') id: string) {
+    return this.visitsService.complete(+id);
+  }
+
+  @Get()
+  findAll() {
+    return this.visitsService.findAll();
   }
 }

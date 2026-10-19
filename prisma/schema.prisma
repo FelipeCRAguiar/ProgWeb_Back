@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,6 +5,121 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id       Int         @id @default(autoincrement())
+  username String      @unique
+  email    String      @unique
+  password String
+  cpf      String      @unique
+  phone    String?
+  birthday DateTime    @db.Date
+  status   UserStatus  @default(ATIVO)
+  profile  UserProfile @default(ADOTANTE)
+  adoption Adoption[]
+  donation Donation[]
+  visit    Visit[]
+}
+
+model Shelter {
+  id           Int        @id @default(autoincrement())
+  name         String
+  cnpj         String     @unique
+  address      String     @unique
+  phone        String     @unique
+  email        String     @unique
+  maxCapacity  Int
+  workingHours String
+  atendeeLimit Int
+  donation     Donation[]
+  visit        Visit[]
+}
+
+model Species {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  race        Race[]
+}
+
+model Race {
+  id        Int      @id @default(autoincrement())
+  name      String
+  size      Size
+  speciesId Int
+  animal    Animal[]
+  species   Species  @relation(fields: [speciesId], references: [id])
+}
+
+model Animal {
+  id            Int             @id @default(autoincrement())
+  name          String
+  sex           Sex
+  birthday      DateTime        @db.Date
+  description   String?
+  status        AnimalStatus    @default(DISPONIVEL)
+  raceId        Int
+  adoption      Adoption?
+  race          Race            @relation(fields: [raceId], references: [id])
+  animalImage   AnimalImage[]
+  medicalRecord MedicalRecord[]
+}
+
+model MedicalRecord {
+  id             Int        @id @default(autoincrement())
+  animalId       Int
+  type           RecordType
+  description    String
+  date           DateTime   @db.Date
+  vaterinaryName String
+  animal         Animal     @relation(fields: [animalId], references: [id])
+}
+
+model Adoption {
+  id           Int            @id @default(autoincrement())
+  userId       Int
+  animalId     Int            @unique
+  status       AdoptionStatus @default(PENDENTE)
+  observation  String?
+  adoptionDate DateTime       @db.Date
+  animal       Animal         @relation(fields: [animalId], references: [id])
+  user         User           @relation(fields: [userId], references: [id])
+}
+
+model Visit {
+  id        Int         @id @default(autoincrement())
+  userId    Int
+  shelterId Int
+  visitDate DateTime    @db.Date
+  status    VisitStatus @default(AGENDADA)
+  shelter   Shelter     @relation(fields: [shelterId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
+}
+
+enum DonationStatus {
+  PENDENTE
+  CONFIRMADO
+  CANCELADO
+}
+
+model Donation {
+  id          Int            @id @default(autoincrement())
+  userId      Int
+  shelterId   Int
+  type        DonationType
+  value       Int?
+  description String?
+  status      DonationStatus @default(PENDENTE)
+  shelter     Shelter        @relation(fields: [shelterId], references: [id])
+  user        User           @relation(fields: [userId], references: [id])
+}
+
+model AnimalImage {
+  id       Int    @id @default(autoincrement())
+  animalId Int
+  imageUrl String
+  animal   Animal @relation(fields: [animalId], references: [id])
 }
 
 enum UserStatus {
@@ -23,55 +133,10 @@ enum UserProfile {
   ADMIN
 }
 
-model User {
-  id Int @id @default(autoincrement())
-  username String @unique
-  email String @unique
-  password String
-  cpf String @unique
-  phone String?
-  birthday DateTime @db.Date
-  status UserStatus @default(ATIVO)
-  profile UserProfile @default(ADOTANTE)
-  adoption Adoption[]
-  visit Visit[]
-  donation Donation[]
-}
-
-model Shelter {
-  id Int @id @default(autoincrement())
-  name String
-  cnpj String @unique
-  address String @unique
-  phone String @unique
-  email String @unique
-  maxCapacity Int
-  workingHours String
-  atendeeLimit Int
-  visit Visit[]
-  donation Donation[]
-}
-
-model Species {
-  id Int @id @default(autoincrement())
-  name String
-  description String?
-  race Race[]
-}
-
 enum Size {
   PEQUENO
   MEDIO
   GRANDE
-}
-
-model Race {
-  id Int @id @default(autoincrement())
-  name String
-  size Size
-  speciesId Int
-  species Species @relation(fields: [speciesId], references: [id])
-  animal Animal[]
 }
 
 enum Sex {
@@ -86,35 +151,11 @@ enum AnimalStatus {
   INATIVO
 }
 
-model Animal {
-  id Int @id @default(autoincrement())
-  name String
-  sex Sex
-  birthday DateTime @db.Date
-  description String?
-  status AnimalStatus @default(DISPONIVEL)
-  raceId Int
-  race Race @relation(fields: [raceId], references: [id])
-  medicalRecord MedicalRecord[]
-  adoption Adoption?
-  animalImage AnimalImage[]
-}
-
 enum RecordType {
   VACINA
   CONSULTA
   CASTRACAO
   EXAME
-}
-
-model MedicalRecord {
-  id Int @id @default(autoincrement())
-  animalId Int
-  type RecordType
-  description String
-  date DateTime @db.Date
-  vaterinaryName String
-  animal Animal @relation(fields: [animalId], references: [id])
 }
 
 enum AdoptionStatus {
@@ -125,31 +166,10 @@ enum AdoptionStatus {
   CANCELADO
 }
 
-model Adoption {
-  id Int @id @default(autoincrement())
-  userId Int
-  animalId Int @unique
-  status AdoptionStatus @default(PENDENTE)
-  observation String?
-  adoptionDate DateTime @db.Date
-  user User @relation(fields: [userId], references: [id])
-  animal Animal @relation(fields: [animalId], references: [id])
-}
-
 enum VisitStatus {
   AGENDADA
   CONFIRMADA
   CANCELADA
-}
-
-model Visit {
-  id Int @id @default(autoincrement())
-  userId Int
-  shelterId Int
-  visitDate DateTime @db.Date
-  status VisitStatus @default(AGENDADA)
-  user User @relation(fields: [userId], references: [id])
-  shelter Shelter @relation(fields: [shelterId], references: [id])
 }
 
 enum DonationType {
@@ -157,22 +177,4 @@ enum DonationType {
   DINHEIRO
   MEDICAMENTO
   OUTRO
-}
-
-model Donation {
-  id Int @id @default(autoincrement())
-  userId Int
-  shelterId Int
-  type DonationType
-  value Int?
-  description String?
-  user User @relation(fields: [userId], references: [id])
-  shelter Shelter @relation(fields: [shelterId], references: [id])
-}
-
-model AnimalImage {
-  id Int @id @default(autoincrement())
-  animalId Int
-  imageUrl String
-  animal Animal @relation(fields: [animalId], references: [id])
 }

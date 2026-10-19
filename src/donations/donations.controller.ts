@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { DonationsService } from './donations.service.js';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateDonationDto } from './dto/create-donation.dto.js';
 import { UpdateDonationDto } from './dto/update-donation.dto.js';
+import { DonationsService } from './donations.service.js';
 
 @Controller('donations')
 export class DonationsController {
@@ -12,9 +12,41 @@ export class DonationsController {
     return this.donationsService.create(createDonationDto);
   }
 
-  @Get()
-  findAll() {
-    return this.donationsService.findAll();
+  @Get('my-donations')
+  findMyDonations(
+    @Query('userId') userId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('type') type?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.donationsService.findMyDonations(Number(userId), {
+      page,
+      limit,
+      type,
+      status,
+    });
+  }
+
+  @Get('stats')
+  getStats() {
+    return this.donationsService.getStats();
+  }
+
+  @Get('shelter/:shelterId')
+  findShelterDonations(
+    @Param('shelterId') shelterId: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('type') type?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.donationsService.findShelterDonations(Number(shelterId), {
+      page,
+      limit,
+      type,
+      status,
+    });
   }
 
   @Get(':id')
@@ -22,7 +54,7 @@ export class DonationsController {
     return this.donationsService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateDonationDto: UpdateDonationDto) {
     return this.donationsService.update(+id, updateDonationDto);
   }
@@ -30,5 +62,10 @@ export class DonationsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.donationsService.remove(+id);
+  }
+
+  @Get()
+  findAll() {
+    return this.donationsService.findAll();
   }
 }
