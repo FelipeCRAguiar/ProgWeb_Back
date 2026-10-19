@@ -29,14 +29,14 @@ export class AdoptionController {
     );
   }
 
-  @Get(':id')
+  @Get('one/:id')
   findOne(@Param('id') id: string) {
     return this.adoptionService.findOne(+id);
   }
 
   @UseGuards(AuthGuard, RolesGuard)
   @SetMetadata('roles', ['ADMIN'])
-  @Patch(':id')
+  @Patch('one/:id')
   update(@Param('id') id: string, @Body(ValidationPipe) updateAdoptionDto: UpdateAdoptionDto) {
     return this.adoptionService.update(+id, updateAdoptionDto);
   }
@@ -49,21 +49,21 @@ export class AdoptionController {
   }
 
   @UseGuards(AuthGuard)
-  @Get('my-requests')
+  @Get('/my-requests')
   getFromUser(@Req() request: any) {
     const user = request['user']
     return this.adoptionService.getFromUser(user.email)
   }
 
   @UseGuards(AuthGuard)
-  @Get(':id/shelter')
+  @Get('shelter/:id')
   getFromShelter(@Param('id') id: string) {
     return this.adoptionService.getFromShelter(+id)
   }
 
   @UseGuards(AuthGuard, RolesGuard)
   @SetMetadata('roles', ['ADMIN'])
-  @Patch(':id/observation')
+  @Patch('observation/:id')
   patchObservation(@Param('id') id: string, @Body() data: any) {
     return this.adoptionService.patchObservation(+id, data.observation)
   }

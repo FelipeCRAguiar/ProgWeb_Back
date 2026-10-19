@@ -20,7 +20,7 @@ export class AdoptionService {
       where: {
         userId: createAdoptionDto.userId,
         status: {
-          in: ['APROVADO', 'EM_ANALISE']
+          in: ['PENDENTE', 'EM_ANALISE']
         }
       }
     })
