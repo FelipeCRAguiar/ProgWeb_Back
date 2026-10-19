@@ -1,12 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ValidationPipe, UseGuards, SetMetadata } from '@nestjs/common';
 import { RaceService } from './race.service.js';
 import { CreateRaceDto } from './dto/create-race.dto.js';
 import { UpdateRaceDto } from './dto/update-race.dto.js';
+import { AuthGuard } from '../modules/auth/auth.guard.js';
+import { RolesGuard } from '../modules/auth/roles.guard.js';
 
 @Controller('race')
 export class RaceController {
   constructor(private readonly raceService: RaceService) {}
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @SetMetadata('roles', ['ADMIN'])
   @Post()
   create(@Body(ValidationPipe) createRaceDto: CreateRaceDto) {
     return this.raceService.create(createRaceDto);

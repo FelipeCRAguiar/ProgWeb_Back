@@ -1,5 +1,4 @@
 import { Controller, Get, Post, Patch, Delete, Body, Req, Param, Query, UseGuards, UploadedFile, UseInterceptors, SetMetadata, ParseIntPipe } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AnimalsService } from './animals.service.js';
 import { CreateAnimalDto } from './dto/create-animal.dto.js';
@@ -7,8 +6,6 @@ import { UpdateAnimalDto } from './dto/update-animal.dto.js';
 import { UpdateStatusDto } from './dto/update-status.dto.js';
 import { AuthGuard } from '../modules/auth/auth.guard.js';
 import { RolesGuard } from '../modules/auth/roles.guard.js';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 
 @ApiTags('Animais')
@@ -51,7 +48,7 @@ export class AnimalsController {
 
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
-  @SetMetadata('roles', ['ADMIN', 'VOLUNTARIO'])
+  @SetMetadata('roles', ['ADMIN'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Cadastrar novo animal' })
   create(@Body(ValidationPipe) data: CreateAnimalDto) {
@@ -60,7 +57,7 @@ export class AnimalsController {
 
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @SetMetadata('roles', ['ADMIN', 'VOLUNTARIO'])
+  @SetMetadata('roles', ['ADMIN'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Editar informações do animal' })
   update(@Param('id') id: string, @Body() data: UpdateAnimalDto) {
@@ -69,7 +66,7 @@ export class AnimalsController {
 
   @Patch(':id/status')
   @UseGuards(AuthGuard, RolesGuard)
-  @SetMetadata('roles', ['ADMIN', 'VOLUNTARIO'])
+  @SetMetadata('roles', ['ADMIN'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Alterar status do animal' })
   updateStatus(@Param('id') id: string, @Body() data: UpdateStatusDto) {
@@ -85,7 +82,7 @@ export class AnimalsController {
     return this.animalsService.remove(Number(id));
   }
 
-  @Post(':id/images')
+  /*@Post(':id/images')
   @UseGuards(AuthGuard, RolesGuard)
   @SetMetadata('roles', ['ADMIN', 'VOLUNTARIO'])
   @ApiConsumes('multipart/form-data')
@@ -101,5 +98,5 @@ export class AnimalsController {
   @ApiOperation({ summary: 'Fazer upload de foto do animal' })
   uploadImage(@Param('id', ParseIntPipe) id: number, @UploadedFile() file: Express.Multer.File) {
     return this.animalsService.uploadImage(id, file);
-  }
+  }*/
 }

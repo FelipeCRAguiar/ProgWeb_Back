@@ -103,10 +103,12 @@ export class AdoptionService {
     })
   }
 
-  async getFromUser(id: number) {
+  async getFromUser(email: string) {
     return this.prisma.adoption.findMany({
-      where : {
-        userId: id
+      where: {
+        user: {
+          email
+        }
       }
     })
   }
