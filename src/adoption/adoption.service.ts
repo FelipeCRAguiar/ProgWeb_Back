@@ -97,6 +97,13 @@ export class AdoptionService {
         where: { id: adoption.animalId },
         data: { status: 'ADOTADO' }
       })
+    } else if(updateAdoptionDto.status === 'CANCELADO' || updateAdoptionDto.status === 'REJEITADO') {
+      await this.prisma.animal.update({
+        where: { id: adoption.animalId},
+        data: {
+          status: 'DISPONIVEL'
+        }
+      })
     }
 
     return await this.prisma.adoption.update({
@@ -111,8 +118,15 @@ export class AdoptionService {
     });
 
     if(!adoption) {
-      throw new NotFoundException('Raca inexistente')
+      throw new NotFoundException('Adocao inexistente')
     }
+
+    await this.prisma.animal.update({
+      where: { id: adoption.animalId},
+      data: {
+        status: 'DISPONIVEL'
+      }
+    })
 
     await this.prisma.adoption.delete({
       where: { id }
