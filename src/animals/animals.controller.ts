@@ -49,7 +49,7 @@ export class AnimalsController {
 
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
-  @SetMetadata('roles', ['ADMIN', 'VOLUNTARIO'])
+  @SetMetadata('roles', ['ADMIN'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Cadastrar novo animal' })
   create(@Body(ValidationPipe) data: CreateAnimalDto) {
@@ -58,7 +58,7 @@ export class AnimalsController {
 
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
-  @SetMetadata('roles', ['ADMIN', 'VOLUNTARIO'])
+  @SetMetadata('roles', ['ADMIN'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Editar informações do animal' })
   update(@Param('id') id: string, @Body() data: UpdateAnimalDto) {
@@ -67,7 +67,7 @@ export class AnimalsController {
 
   @Patch(':id/status')
   @UseGuards(AuthGuard, RolesGuard)
-  @SetMetadata('roles', ['ADMIN', 'VOLUNTARIO'])
+  @SetMetadata('roles', ['ADMIN'])
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Alterar status do animal' })
   updateStatus(@Param('id') id: string, @Body() data: UpdateStatusDto) {
