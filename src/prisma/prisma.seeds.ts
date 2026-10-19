@@ -5,6 +5,8 @@ import { seedAuth } from '../modules/auth/seed.js';
 import { seedAnimals } from '../animals/seed.js';
 import { seedAdoptions } from '../adoption/adoption.seed.js';
 import { seedRaces } from '../race/race.seeds.js';
+import { seedUsers } from '../users/users.seeds.js';
+import { seedMedicalRecords } from '../medical-records/medical-records.seeds.js';
 
 const prisma = new PrismaService();
 
@@ -16,7 +18,9 @@ async function main() {
   await seedAuth(prisma);
   await seedRaces(prisma);
   await seedAnimals(prisma);
+  await seedUsers();
   await seedAdoptions(prisma);
+  await seedMedicalRecords(); // depois de animais
 
   console.log('seeds foram executados com sucesso');
 }

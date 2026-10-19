@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 
+
 @Injectable()
 export class AnimalsRepository {
     constructor(private prisma: PrismaService) { }
@@ -96,6 +97,12 @@ export class AnimalsRepository {
                 },
                 animalImage: true,
             },
+        });
+    }
+
+    async createImage(data: { animalId: number; imageUrl: string }) {
+        return this.prisma.animalImage.create({
+            data,
         });
     }
 }
