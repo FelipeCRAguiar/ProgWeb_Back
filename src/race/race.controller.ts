@@ -34,11 +34,15 @@ export class RaceController {
     return this.raceService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @SetMetadata('roles', ['ADMIN'])
   @Patch(':id')
   update(@Param('id') id: string, @Body(ValidationPipe) updateRaceDto: UpdateRaceDto) {
     return this.raceService.update(+id, updateRaceDto);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @SetMetadata('roles', ['ADMIN'])
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.raceService.remove(+id);

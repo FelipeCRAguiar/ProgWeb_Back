@@ -35,10 +35,19 @@ export class AdoptionService {
 
     if(!animal) {
       throw new NotFoundException('Animal Inexistente')
+    } else if(animal.status !== 'DISPONIVEL') {
+      throw new ConflictException('Animal ja esta em processo de adocao')
     }
 
-    return this.prisma.adoption.create({
-      data: {...createAdoptionDto}
+    await this.prisma.animal.update({
+      where: { id: animal.id },
+      data: { status: 'EM_PROCESSO' }
+    })
+
+    return await this.prisma.adoption.create({
+      data: {
+        ...createAdoptionDto,
+        adoptionDate: new Date(createAdoptionDto.adoptionDate)}
     });
   }
 
@@ -81,6 +90,13 @@ export class AdoptionService {
 
     if(!adoption) {
       throw new NotFoundException('Adocao inexistente')
+    }
+
+    if(updateAdoptionDto.status === 'APROVADO') {
+      await this.prisma.animal.update({
+        where: { id: adoption.animalId },
+        data: { status: 'ADOTADO' }
+      })
     }
 
     return await this.prisma.adoption.update({
