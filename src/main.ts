@@ -3,19 +3,14 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module.js';
 
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({
-    origin: true,
-    credentials: true,
-  });
-
-  app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
-    .setTitle('ProgWebBackend')
-    .setDescription('Trabalho de programação web sobre backend')
+    .setTitle('API Adoção de Animais')
+    .setDescription('Backend do projeto de adoção')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
@@ -25,5 +20,4 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
 }
-
 await bootstrap();
