@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { Controller, Get, Post, Patch, Delete, Body, Req, Param, Query, UseGuards, UploadedFile, UseInterceptors, SetMetadata, ParseIntPipe } from '@nestjs/common';
-=======
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, SetMetadata, ParseIntPipe } from '@nestjs/common';
->>>>>>> origin/main
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AnimalsService } from './animals.service.js';
 import { CreateAnimalDto } from './dto/create-animal.dto.js';
