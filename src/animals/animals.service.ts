@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { AnimalsRepository } from './animals.repository.js';
 import { CreateAnimalDto } from './dto/create-animal.dto.js';
 import { UpdateAnimalDto } from './dto/update-animal.dto.js';
+import { CreateAnimalImageDto } from './dto/create-animal-image.dto.js';
 
 @Injectable()
 export class AnimalsService {
@@ -78,11 +79,13 @@ export class AnimalsService {
     await this.animalsRepository.delete(id);
     return { message: 'Animal removido com sucesso' };
   }
-  async uploadImage(id: number, file: any) {
-    await this.findOne(id);
 
-    const imageUrl = `http://localhost:3000/uploads/${file.filename}`;
+  async addImage(animalId: number, dto: CreateAnimalImageDto) {
+    await this.findOne(animalId);
 
-    return this.animalsRepository.addImage(id, imageUrl);
+    return this.animalsRepository.createImage({
+      animalId,
+      imageUrl: dto.imageUrl,
+    });
   }
 }
