@@ -122,7 +122,11 @@ export class AdoptionService {
 
     return this.prisma.adoption.findMany({
       where: {
-        
+        animal : {
+          shelter: {
+            id: id
+          }
+        }
       },
       include: {
         animal: true
