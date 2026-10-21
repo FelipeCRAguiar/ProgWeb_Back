@@ -164,6 +164,12 @@ enum DonationType {
   OUTRO
 }
 
+enum DonationStatus {
+  PENDENTE
+  CONFIRMADO
+  CANCELADO
+}
+
 model Donation {
   id Int @id @default(autoincrement())
   userId Int
@@ -171,6 +177,7 @@ model Donation {
   type DonationType
   value Int?
   description String?
+  status DonationStatus @default(PENDENTE)
   user User @relation(fields: [userId], references: [id])
   shelter Shelter @relation(fields: [shelterId], references: [id])
 }
