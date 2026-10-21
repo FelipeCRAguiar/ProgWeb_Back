@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, Query, UseGuards, SetMetadata, Req } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AdoptionService } from './adoption.service.js';
 import { CreateAdoptionDto } from './dto/create-adoption.dto.js';
 import { UpdateAdoptionObservationDto } from './dto/update-adoption-observation.dto.js';
