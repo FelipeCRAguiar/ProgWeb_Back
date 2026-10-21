@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ValidationPipe, Query, UseGuards, SetMetadata, Req } from '@nestjs/common';
 import { AdoptionService } from './adoption.service.js';
 import { CreateAdoptionDto } from './dto/create-adoption.dto.js';
-import { UpdateAdoptionDto } from './dto/update-adoption.dto.js';
+import { UpdateAdoptionObservationDto } from './dto/update-adoption-observation.dto.js';
+import { UpdateAdoptionStatusDto } from './dto/update-adoption-status.dto.js'
 import { AdoptionStatus } from '../generated/prisma/enums.js';
 import { AuthGuard } from '../modules/auth/auth.guard.js';
 import { RolesGuard } from '../modules/auth/roles.guard.js';
@@ -36,9 +37,9 @@ export class AdoptionController {
 
   @UseGuards(AuthGuard, RolesGuard)
   @SetMetadata('roles', ['ADMIN'])
-  @Patch('one/:id')
-  update(@Param('id') id: string, @Body(ValidationPipe) updateAdoptionDto: UpdateAdoptionDto) {
-    return this.adoptionService.update(+id, updateAdoptionDto);
+  @Patch('status/:id')
+  updateStatus(@Param('id') id: string, @Body(ValidationPipe) updateAdoptionDto: UpdateAdoptionStatusDto) {
+    return this.adoptionService.updateStatus(+id, updateAdoptionDto);
   }
 
   @UseGuards(AuthGuard, RolesGuard)
@@ -64,7 +65,7 @@ export class AdoptionController {
   @UseGuards(AuthGuard, RolesGuard)
   @SetMetadata('roles', ['ADMIN'])
   @Patch('observation/:id')
-  patchObservation(@Param('id') id: string, @Body() data: any) {
-    return this.adoptionService.patchObservation(+id, data.observation)
+  updateObservation(@Param('id') id: string, @Body(ValidationPipe) data: UpdateAdoptionObservationDto) {
+    return this.adoptionService.updateObservation(+id, data)
   }
 }
