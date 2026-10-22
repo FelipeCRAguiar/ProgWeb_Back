@@ -1,6 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAdoptionDto } from './dto/create-adoption.dto.js';
-import { UpdateAdoptionDto } from './dto/update-adoption.dto.js';
+import { UpdateAdoptionObservationDto } from './dto/update-adoption-observation.dto.js';
+import { UpdateAdoptionStatusDto } from './dto/update-adoption-status.dto.js'
 import { AdoptionStatus } from '../generated/prisma/enums.js'
 import { PrismaService } from '../prisma/prisma.service.js'
 
@@ -67,13 +68,19 @@ export class AdoptionService {
     return await this.prisma.adoption.findMany({
       skip,
       take: limit,
-      where
+      where,
+      include: {
+        animal: true
+      }
     });
   }
 
   async findOne(id: number) {
     const adoption = await this.prisma.adoption.findFirst({
-      where: { id }
+      where: { id },
+      include: {
+        animal: true
+      }
     });
 
     if(!adoption) {
@@ -83,7 +90,7 @@ export class AdoptionService {
     return adoption
   }
 
-  async update(id: number, updateAdoptionDto: UpdateAdoptionDto) {
+  async updateStatus(id: number, updateAdoptionDto: UpdateAdoptionStatusDto) {
     const adoption = await this.prisma.adoption.findFirst({
       where: { id }
     });
@@ -139,6 +146,9 @@ export class AdoptionService {
         user: {
           email
         }
+      },
+      include: {
+        animal: true
       }
     })
   }
@@ -166,7 +176,7 @@ export class AdoptionService {
     })
   }
 
-  async patchObservation(id: number, observation: string) {
+  async updateObservation(id: number, observation: UpdateAdoptionObservationDto) {
     const adoption = await this.prisma.adoption.findFirst({
       where: { id }
     });
@@ -177,7 +187,7 @@ export class AdoptionService {
 
     return await this.prisma.adoption.update({
       where: { id },
-      data: { observation: observation }
+      data: { observation: observation.observation }
     })
   }
 }
