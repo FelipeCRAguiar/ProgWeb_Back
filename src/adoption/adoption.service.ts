@@ -68,13 +68,19 @@ export class AdoptionService {
     return await this.prisma.adoption.findMany({
       skip,
       take: limit,
-      where
+      where,
+      include: {
+        animal: true
+      }
     });
   }
 
   async findOne(id: number) {
     const adoption = await this.prisma.adoption.findFirst({
-      where: { id }
+      where: { id },
+      include: {
+        animal: true
+      }
     });
 
     if(!adoption) {
@@ -140,6 +146,9 @@ export class AdoptionService {
         user: {
           email
         }
+      },
+      include: {
+        animal: true
       }
     })
   }
