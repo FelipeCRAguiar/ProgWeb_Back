@@ -40,7 +40,8 @@ export class AdoptionController {
     );
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
+  @SetMetadata('roles', ['ADMIN'])
   @ApiBearerAuth()
   @Get('one/:id')
   @ApiOperation({summary: 'Pegar um pedido de adocao em especifico'})
